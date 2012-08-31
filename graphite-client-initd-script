@@ -1,0 +1,29 @@
+#! /bin/sh
+# /etc/init.d/graphite-client
+
+# Some things that run always
+touch /var/lock/graphite-client
+
+GRAPHITE_HOME=/opt/graphite
+CARBON_USER=www-data
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+    start)
+        echo "Starting script graphite-client "
+        su $CARBON_USER -c "cd $GRAPHITE_HOME"; su $CARBON_USER -c "$GRAPHITE_HOME/bin/graphite-client.py start" ;;
+    stop)
+        echo "Stopping script graphite-client"
+        su $CARBON_USER -c "cd $GRAPHITE_HOME"; su $CARBON_USER -c "$GRAPHITE_HOME/bin/graphite-client.py stop"
+        ;;
+    restart)
+        echo "Restarting script graphite-client"
+        su $CARBON_USER -c "cd $GRAPHITE_HOME"; su $CARBON_USER -c "$GRAPHITE_HOME/bin/graphite-client.py restart"
+        ;;
+    *)
+        echo "Usage: /etc/init.d/graphite-client {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit 0
