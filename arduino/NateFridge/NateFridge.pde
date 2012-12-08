@@ -15,8 +15,10 @@
 double temp[numProbes];
 
 // fridge, liquid, freezer, arduino
-double minTemp[numProbes] = {-1000,66,-1000};
-double maxTemp[numProbes] = {1000,68,1000};
+// Attempting to keep freezer at 46-50
+// For brewing, attempt to keep fridge between 66-68
+double minTemp[numProbes] = {-1000,-1000,46};
+double maxTemp[numProbes] = {1000,1000,50};
 
 int turnAllOff=0;
 int turnFridgeOn=0;
