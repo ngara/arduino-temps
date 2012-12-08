@@ -6,6 +6,7 @@ import sys
 import time
 import atexit
 import serial
+import serial.serialutil
 import datetime
 import platform 
 import traceback
@@ -145,25 +146,43 @@ class Daemon:
 
 
 class graphite_client(Daemon):
-    LOGFILE = "/var/log/graphite-client.log"
-    ser_dev = "/dev/ttyUSB0"
+    LOGFILE = "/tmp/graphite-client.log"
+
 
     def run(self):
-        self.open_serial()
+        self.log("*** Started Graphite Client Daemon ***")
+        sdev = self.open_serial()
+        self.log("Serial port %s open and receiving data" % sdev)
         while True:
             try:
                 self.run_once()
-
             except Exception, e:
+                self.close_serial()
+                while not sdev:
+                    sdev = self.open_serial()
+                    time.sleep(5)
+                self.log("Serial port %s reopened and receiving data" % sdev)
                 self.log(str(e))
             finally:
                 time.sleep(1)
 
+
     def open_serial(self):
-        self.ser = serial.Serial(self.ser_dev, 9600, timeout=10)
+        self.ser = None
+        sdev = 0
+        while not self.ser and sdev < 10:
+            try:
+                d = "/dev/ttyUSB%s" % str(sdev)
+                self.ser = serial.Serial(d, 9600, timeout=10)
+            except serial.serialutil.SerialException:
+                self.log("Could not open %s" % d)
+                sdev += 1
+        return d
+
 
     def close_serial(self):
         self.ser.close()
+
 
     def get_serial_data(self):
         retval = {}
@@ -171,7 +190,7 @@ class graphite_client(Daemon):
         while True:
             line = self.ser.readline().strip().strip("\x00")
 
-            self.log("*** %s ***" % line)
+            #self.log("*** %s ***" % line)
 
             # There is possibility of data corruption so we want to ensure
             # that the search matches all the data we're gathering
@@ -237,11 +256,10 @@ class graphite_client(Daemon):
             lines.append("fridge.%s %s %d" % (temp, temps[temp], now))
             
         message = '\n'.join(lines) + '\n' #all lines must end in a newline
-        self.log("sending message")
-        self.log('-'*50)
-        self.log(message)
+        #self.log("sending message")
+        #self.log('-'*50)
+        #self.log(message)
         self.send_msg(message)
-
 
 
  
