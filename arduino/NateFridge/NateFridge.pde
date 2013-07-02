@@ -17,9 +17,9 @@ double temp[numProbes];
 // fridge, liquid, freezer, arduino
 // Attempting to keep freezer at 46-50
 // For brewing, attempt to keep fridge between 66-69
-double minTemp[numProbes] = {40,66,46};
-double maxTemp[numProbes] = {100,69,100};
-int primaryProbe = 1 // Fridge water temp is primary
+double minTemp[numProbes] = {0,66,46};
+double maxTemp[numProbes] = {100,69,50};
+int primaryProbe = 1; // Fridge water temp is primary
 
 int turnAllOff=0;
 int turnFridgeOn=0;
