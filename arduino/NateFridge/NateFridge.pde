@@ -19,6 +19,7 @@ double temp[numProbes];
 // For brewing, attempt to keep fridge between 66-69
 double minTemp[numProbes] = {40,66,46};
 double maxTemp[numProbes] = {100,69,100};
+int primaryProbe = 1 // Fridge water temp is primary
 
 int turnAllOff=0;
 int turnFridgeOn=0;
@@ -102,13 +103,29 @@ void checkTemperatures() {
   boolean greaterThanMax = false;
   boolean lessThanMin = false;
 
+  // read and store temperatures
   for( int i=0; i<numProbes; i++ ) {
     temp[i] = readThermistor(i);
-    if( temp[i] > maxTemp[i] ) {
-      greaterThanMax = true;
-    }
-    if( temp[i] < minTemp[i] ) {
-      lessThanMin = true;
+  }
+
+  // now test primary probe
+  if( temp[primaryProbe] > maxTemp[primaryProbe] ) {
+    greaterThanMax = true;
+  }
+  if( temp[primaryProbe] < minTemp[primaryProbe] ) {
+    lessThanMin = true;
+  }
+
+  // if no action on primary probe, determine what to do with secondary
+  if( greaterThanMax!=true && lessThanMin!=true ) {
+    for( int i=0; i<numProbes; i++ ) {
+      if( i==primaryProbe ) continue;
+      if( temp[i] > maxTemp[i] ) {
+        greaterThanMax = true;
+      }
+      if( temp[i] < minTemp[i] ) {
+        lessThanMin = true;
+      }
     }
   }
 
