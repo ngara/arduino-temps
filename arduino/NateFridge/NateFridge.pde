@@ -16,9 +16,9 @@ double temp[numProbes];
 
 // fridge, liquid, freezer, arduino
 // Attempting to keep freezer at 46-50
-// For brewing, attempt to keep fridge between 66-68
-double minTemp[numProbes] = {-1000,-1000,46};
-double maxTemp[numProbes] = {1000,1000,50};
+// For brewing, attempt to keep fridge between 66-69
+double minTemp[numProbes] = {40,66,46};
+double maxTemp[numProbes] = {100,69,100};
 
 int turnAllOff=0;
 int turnFridgeOn=0;
@@ -112,7 +112,7 @@ void checkTemperatures() {
     }
   }
 
-  // take care of illogical case: both being true
+  // take care of case where both are true--they cancel out
   if( greaterThanMax==true && lessThanMin==true ) {
     greaterThanMax = false;
     lessThanMin = false;
