@@ -25,12 +25,16 @@ int turnAllOff=0;
 int turnFridgeOn=0;
 int turnHeaterOn=0;
 int threshold=5;
+int heaterMaxCycles=15;
+int heaterCounter=0;
+boolean heaterIsOn=true;
 
 // Function Prototypes
 double Thermistor(int RawADC);
 double median(double num1, double num2, double num3);
 void readThermistors();
 void checkTemperatures();
+void regulateHeater();
 void switchHeaterOn();
 void switchFridgeOn();
 void switchAllOff();
@@ -154,13 +158,24 @@ void checkTemperatures() {
   if( turnAllOff==threshold ) {
     switchAllOff();
   } else if( turnHeaterOn==threshold ) {
-    switchHeaterOn();
+    regulateHeater();
   } else if( turnFridgeOn==threshold ) {
     switchFridgeOn();
   }
 }
 
-
+void regulateHeater() {
+  // called every loop while heater should be "on" to prevent overheating
+  heaterCounter++;
+  if( heaterCounter % heaterMaxCycles==0 ) {
+    heaterIsOn = !heaterIsOn;
+  }
+  if( heaterIsOn ) {
+    switchHeaterOn();
+  } else {
+    switchAllOff();
+  }
+}
 void switchHeaterOn() {
   digitalWrite(fridgeControlPin, LOW);
   digitalWrite(heaterControlPin, HIGH);
