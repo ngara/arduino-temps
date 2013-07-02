@@ -25,7 +25,7 @@ int turnAllOff=0;
 int turnFridgeOn=0;
 int turnHeaterOn=0;
 int threshold=5;
-int heaterMaxCycles=15;
+int heaterMaxCycles=5;
 int heaterCounter=0;
 boolean heaterIsOn=true;
 
